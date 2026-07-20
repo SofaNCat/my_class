@@ -1,279 +1,1184 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>로비</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#8ed9ff" />
+  <title>우리 반 여름방학 한마디</title>
   <style>
+    :root {
+      --ink: #2f3440;
+      --muted: #6d7481;
+      --sky: #8ed9ff;
+      --sky-deep: #44b9f1;
+      --cream: #fffaf0;
+      --yellow: #ffd866;
+      --pink: #ffb9d0;
+      --mint: #aee8cd;
+      --lavender: #cfc6ff;
+      --white: #ffffff;
+      --danger: #ff6b73;
+      --line: rgba(47, 52, 64, 0.12);
+      --shadow: 0 12px 30px rgba(73, 120, 153, 0.14);
+      --radius-lg: 28px;
+      --radius-md: 20px;
+      --radius-sm: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      padding: 0;
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 8%, rgba(255,255,255,.95) 0 3%, transparent 3.2%),
+        radial-gradient(circle at 84% 13%, rgba(255,255,255,.9) 0 2.4%, transparent 2.6%),
+        linear-gradient(180deg, #9fe2ff 0 260px, #eefaff 260px 100%);
+      overflow-x: hidden;
     }
+
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .decor {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .sun {
+      position: absolute;
+      top: 34px;
+      right: max(22px, 6vw);
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: var(--yellow);
+      box-shadow: 0 0 0 14px rgba(255, 216, 102, .22);
+    }
+
+    .cloud {
+      position: absolute;
+      width: 120px;
+      height: 42px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.88);
+      filter: drop-shadow(0 8px 12px rgba(91, 159, 199, .08));
+    }
+    .cloud::before, .cloud::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      border-radius: 50%;
+      background: inherit;
+    }
+    .cloud::before { width: 58px; height: 58px; left: 18px; }
+    .cloud::after { width: 70px; height: 70px; right: 12px; }
+    .cloud.c1 { top: 70px; left: -18px; transform: scale(.8); }
+    .cloud.c2 { top: 165px; right: 14%; transform: scale(.55); opacity: .72; }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 34px 0 56px;
+    }
+
+    .hero {
+      min-height: 198px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 18px clamp(8px, 3vw, 36px) 26px;
+    }
+
+    .hero-badge {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.76);
+      border: 1px solid rgba(255,255,255,.94);
+      font-weight: 800;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+    }
+
     h1 {
-      text-align: center;
+      margin: 14px 0 8px;
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 1.08;
+      letter-spacing: -0.045em;
     }
-    .room-list {
-      margin: 20px auto;
-      max-width: 400px;
-      list-style-type: none;
+
+    .hero p {
+      margin: 0;
+      max-width: 680px;
+      color: #425b6f;
+      font-size: clamp(15px, 2vw, 18px);
+      line-height: 1.65;
+      font-weight: 650;
+    }
+
+    .shell {
+      padding: 14px;
+      border-radius: 34px;
+      background: rgba(255,255,255,.56);
+      border: 1px solid rgba(255,255,255,.9);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .tabs {
+      display: inline-flex;
+      gap: 5px;
+      padding: 5px;
+      border-radius: 18px;
+      background: rgba(231, 244, 250, .9);
+    }
+
+    .tab-btn {
+      min-height: 44px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 14px;
+      color: var(--muted);
+      background: transparent;
+      font-weight: 850;
+    }
+
+    .tab-btn.active {
+      color: var(--ink);
+      background: var(--white);
+      box-shadow: 0 5px 14px rgba(82, 117, 136, .12);
+    }
+
+    .tools { display: flex; gap: 8px; }
+
+    .icon-btn, .secondary-btn, .primary-btn, .danger-btn {
+      min-height: 44px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      font-weight: 850;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .icon-btn:hover, .secondary-btn:hover, .primary-btn:hover, .danger-btn:hover { transform: translateY(-1px); }
+    .icon-btn:active, .secondary-btn:active, .primary-btn:active, .danger-btn:active { transform: translateY(0); }
+
+    .primary-btn:disabled, input:disabled, textarea:disabled {
+      cursor: not-allowed;
+    }
+
+    .form-card.submitted {
+      position: relative;
+    }
+
+    .form-card.submitted .field,
+    .form-card.submitted .prompt-list,
+    .form-card.submitted .divider,
+    .form-card.submitted .check-row,
+    .form-card.submitted > .primary-btn,
+    .form-card.submitted > .section-kicker,
+    .form-card.submitted > h2,
+    .form-card.submitted > .description {
+      display: none;
+    }
+
+    .submitted-notice {
+      display: none;
+      min-height: 360px;
+      padding: 34px 24px;
+      border: 2px dashed rgba(68, 185, 241, .35);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #f4fcff, #fffaf0);
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-card.submitted .submitted-notice { display: flex; }
+    .submitted-notice .submitted-icon { font-size: 52px; line-height: 1; }
+    .submitted-notice h3 { margin: 4px 0 0; font-size: 24px; }
+    .submitted-notice p { margin: 0; color: var(--muted); line-height: 1.7; font-weight: 650; }
+
+    .icon-btn {
+      width: 46px;
       padding: 0;
+      background: rgba(255,255,255,.92);
+      font-size: 18px;
     }
-    .room-list li {
-      margin: 10px 0;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      cursor: pointer;
-      text-align: center;
-      background-color: #f9f9f9;
-      transition: background-color 0.2s;
+
+    .panel {
+      display: none;
+      min-height: 520px;
+      padding: clamp(18px, 3vw, 34px);
+      border-radius: var(--radius-lg);
+      background: var(--cream);
+      border: 1px solid rgba(255,255,255,.92);
     }
-    .room-list li:hover {
-      background-color: #e3e3e3;
+    .panel.active { display: block; }
+
+    .write-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, .78fr);
+      gap: 22px;
+      align-items: start;
     }
-    .create-room {
+
+    .form-card, .preview-card, .wall-section {
+      border-radius: var(--radius-lg);
+      background: var(--white);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 26px rgba(92, 104, 112, .08);
+    }
+
+    .form-card { padding: clamp(20px, 3vw, 30px); }
+    .preview-card { padding: 24px; position: sticky; top: 18px; }
+
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      color: #3d7b99;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .02em;
+    }
+
+    h2, h3 { letter-spacing: -0.035em; }
+    h2 { margin: 0 0 8px; font-size: clamp(24px, 3vw, 34px); }
+    h3 { margin: 0; font-size: 20px; }
+
+    .description {
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-weight: 600;
+    }
+
+    .field { margin-bottom: 18px; }
+
+    label {
       display: block;
-      margin: 20px auto;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      background-color: #4CAF50;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 900;
     }
-    .create-room:hover {
-      background-color: #45a049;
-    }
-    .popup {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-    }
-    .popup input, .popup select {
-      width: calc(100% - 20px);
-      margin-bottom: 10px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    .popup button {
-      padding: 10px 15px;
-      margin-right: 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .popup .create {
-      background-color: #4CAF50;
-      color: white;
-    }
-    .popup .cancel {
-      background-color: #f44336;
-      color: white;
-    }
-    .popup .create:hover {
-      background-color: #45a049;
-    }
-    .popup .cancel:hover {
-      background-color: #d32f2f;
-    }
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
+
+    .hint { color: var(--muted); font-weight: 600; font-size: 12px; }
+
+    input, textarea {
       width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 999;
+      border: 1.5px solid #dfe8ec;
+      border-radius: 15px;
+      background: #fbfdfe;
+      color: var(--ink);
+      outline: none;
+      transition: border .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    input { height: 49px; padding: 0 14px; }
+    textarea { min-height: 104px; resize: vertical; padding: 13px 14px; line-height: 1.55; }
+    input:focus, textarea:focus {
+      border-color: var(--sky-deep);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(68,185,241,.12);
+    }
+
+    .prompt-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .prompt-line {
+      display: grid;
+      grid-template-columns: 32px minmax(0,1fr);
+      gap: 9px;
+      align-items: center;
+    }
+    .prompt-no {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--yellow);
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .divider {
+      height: 1px;
+      margin: 24px 0;
+      background: linear-gradient(90deg, transparent, #dde6ea 14%, #dde6ea 86%, transparent);
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin: 4px 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 650;
+    }
+    .check-row input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--sky-deep); }
+
+    .primary-btn {
+      width: 100%;
+      padding: 0 18px;
+      color: #17374a;
+      background: linear-gradient(180deg, #aee6ff, #7bd2f8);
+      border-color: #61c5ee;
+      box-shadow: 0 7px 0 #56add0;
+    }
+    .primary-btn:active { box-shadow: 0 3px 0 #56add0; transform: translateY(4px); }
+
+    .secondary-btn {
+      padding: 0 15px;
+      background: var(--white);
+      color: var(--ink);
+    }
+
+    .danger-btn {
+      padding: 0 15px;
+      color: #8e2830;
+      background: #fff0f1;
+      border-color: #ffc8cc;
+    }
+
+    .preview-title { margin-bottom: 14px; }
+    .preview-stack { display: grid; gap: 12px; }
+
+    .mini-note {
+      position: relative;
+      min-height: 132px;
+      padding: 18px 18px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(47,52,64,.1);
+      overflow: hidden;
+    }
+    .mini-note.bucket { background: #fff3bd; transform: rotate(-1deg); }
+    .mini-note.friend { background: #ffdce7; transform: rotate(1deg); }
+    .mini-note::before {
+      content: "";
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      width: 72px;
+      height: 20px;
+      transform: translateX(-50%) rotate(-2deg);
+      background: rgba(255,255,255,.64);
+      border: 1px solid rgba(255,255,255,.72);
+    }
+    .mini-note strong { display: block; margin: 5px 0 10px; }
+    .mini-note p { margin: 0; white-space: pre-wrap; line-height: 1.55; color: #454b55; font-weight: 650; }
+
+    .status-box {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #eef8fc;
+      color: #456a7f;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #69c984; box-shadow: 0 0 0 4px rgba(105,201,132,.14); flex: 0 0 auto; }
+    .status-dot.local { background: #f5ad47; box-shadow: 0 0 0 4px rgba(245,173,71,.16); }
+
+    .wall-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .wall-count { color: var(--muted); font-weight: 800; white-space: nowrap; }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .filter-btn {
+      min-height: 38px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.75);
+      color: var(--muted);
+      font-weight: 850;
+    }
+    .filter-btn.active { color: var(--ink); background: var(--white); box-shadow: 0 5px 13px rgba(81,107,123,.1); }
+
+    .wall-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .wall-card {
+      position: relative;
+      min-height: 220px;
+      padding: 22px;
+      border-radius: 22px;
+      border: 1px solid rgba(47,52,64,.1);
+      box-shadow: 0 10px 20px rgba(92,104,112,.07);
+      animation: pop .25s ease both;
+      overflow: hidden;
+    }
+    .wall-card:nth-child(4n+1) { background: #fff1b8; transform: rotate(-.45deg); }
+    .wall-card:nth-child(4n+2) { background: #ffdbe7; transform: rotate(.4deg); }
+    .wall-card:nth-child(4n+3) { background: #d8f4e7; transform: rotate(-.2deg); }
+    .wall-card:nth-child(4n+4) { background: #e3ddff; transform: rotate(.35deg); }
+    .wall-card::before {
+      content: "";
+      position: absolute;
+      width: 78px;
+      height: 22px;
+      top: -9px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-2deg);
+      background: rgba(255,255,255,.56);
+      border: 1px solid rgba(255,255,255,.72);
+    }
+    .wall-card .block { margin-top: 13px; }
+    .wall-card .block-title { margin-bottom: 5px; color: rgba(47,52,64,.64); font-size: 12px; font-weight: 950; }
+    .wall-card .content { margin: 0; white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; line-height: 1.58; font-weight: 690; }
+    .wall-card .meta { margin-top: 16px; color: rgba(47,52,64,.54); font-size: 11px; font-weight: 700; }
+    .delete-card {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      display: none;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,.74);
+      color: #a73940;
+      font-weight: 950;
+    }
+    body.teacher-mode .delete-card { display: grid; place-items: center; }
+
+    .empty {
+      grid-column: 1 / -1;
+      display: grid;
+      place-items: center;
+      min-height: 320px;
+      padding: 26px;
+      border-radius: 24px;
+      border: 2px dashed #dbe7eb;
+      background: rgba(255,255,255,.56);
+      text-align: center;
+      color: var(--muted);
+      font-weight: 750;
+    }
+    .empty span { display: block; font-size: 46px; margin-bottom: 8px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(24px + env(safe-area-inset-bottom));
+      z-index: 30;
+      max-width: calc(100% - 28px);
+      padding: 13px 18px;
+      border-radius: 999px;
+      color: white;
+      background: rgba(47,52,64,.94);
+      box-shadow: 0 12px 30px rgba(47,52,64,.24);
+      font-weight: 800;
+      opacity: 0;
+      transform: translate(-50%, 18px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    dialog {
+      width: min(440px, calc(100% - 28px));
+      padding: 0;
+      border: 0;
+      border-radius: 24px;
+      box-shadow: 0 24px 70px rgba(42,60,72,.28);
+    }
+    dialog::backdrop { background: rgba(24,42,54,.42); backdrop-filter: blur(4px); }
+    .dialog-inner { padding: 26px; }
+    .dialog-inner p { color: var(--muted); line-height: 1.55; font-weight: 650; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+
+    .presentation .hero, .presentation .topbar .tabs, .presentation .tools .teacher-trigger { display: none; }
+    .presentation .app { width: min(1500px, calc(100% - 24px)); padding-top: 12px; }
+    .presentation .shell { padding: 8px; border-radius: 24px; }
+    .presentation .panel { min-height: calc(100vh - 40px); }
+    .presentation .wall-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .presentation .wall-card { min-height: 250px; font-size: 1.08rem; }
+
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(8px) scale(.98); }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 900px) {
+      .write-layout { grid-template-columns: 1fr; }
+      .preview-card { position: static; }
+      .wall-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .presentation .wall-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      body { background: linear-gradient(180deg, #9fe2ff 0 220px, #eefaff 220px 100%); }
+      .app { width: min(100% - 16px, 1180px); padding-top: 18px; }
+      .hero { min-height: 180px; padding-inline: 10px; }
+      .hero p { max-width: 84%; }
+      .sun { width: 62px; height: 62px; top: 26px; right: 18px; }
+      .shell { padding: 8px; border-radius: 25px; }
+      .topbar { align-items: stretch; }
+      .tabs { flex: 1; }
+      .tab-btn { flex: 1; padding: 0 10px; }
+      .tools { gap: 5px; }
+      .icon-btn { width: 42px; }
+      .panel { padding: 15px; min-height: 480px; }
+      .form-card, .preview-card { padding: 18px; border-radius: 22px; }
+      .field-row { grid-template-columns: 1fr; gap: 0; }
+      .wall-head { align-items: flex-start; flex-direction: column; }
+      .wall-grid, .presentation .wall-grid { grid-template-columns: 1fr; }
+      .wall-card { min-height: 190px; }
+      .presentation .panel { min-height: calc(100vh - 28px); }
+      .presentation .wall-card { min-height: 210px; font-size: 1rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
   </style>
 </head>
 <body>
-  <h1>로비</h1>
-  <button class="create-room">게임방 생성</button>
-  <ul class="room-list" id="roomList"></ul>
-
-  <div class="overlay"></div>
-  <div class="popup" id="roomPopup">
-    <h3>게임방 생성</h3>
-    <input type="text" id="userName" placeholder="사용자 이름" required>
-    <select id="visibility">
-      <option value="public">공개</option>
-      <option value="private">비공개</option>
-    </select>
-    <input type="password" id="roomPassword" placeholder="비밀번호 (비공개 방만)" style="display: none;">
-    <button class="create">생성</button>
-    <button class="cancel">취소</button>
+  <div class="decor" aria-hidden="true">
+    <div class="sun"></div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
   </div>
 
-  <div class="popup" id="passwordPopup" style="display: none;">
-    <h3>비공개 방 입장</h3>
-    <input type="password" id="inputPassword" placeholder="비밀번호 입력" required>
-    <button class="join">입장</button>
-    <button class="cancel">취소</button>
-  </div>
+  <main class="app">
+    <section class="hero">
+      <div class="hero-badge">🌴 여름방학식 특별 활동</div>
+      <h1>우리 반 여름방학 한마디</h1>
+      <p>방학 동안 하고 싶은 일과 친구에게 전하고 싶은 따뜻한 말을 남겨 보세요.</p>
+    </section>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <section class="shell">
+      <div class="topbar">
+        <div class="tabs" role="tablist" aria-label="화면 선택">
+          <button class="tab-btn active" data-tab="write" role="tab" aria-selected="true">✏️ 작성하기</button>
+          <button class="tab-btn" data-tab="wall" role="tab" aria-selected="false">🧡 다 같이 보기</button>
+        </div>
+        <div class="tools">
+          <button class="icon-btn teacher-trigger" id="teacherBtn" type="button" title="선생님 모드" aria-label="선생님 모드">🔐</button>
+          <button class="icon-btn" id="presentBtn" type="button" title="발표 화면" aria-label="발표 화면">⛶</button>
+        </div>
+      </div>
 
-  <script>
+      <section class="panel active" id="writePanel" role="tabpanel">
+        <div class="write-layout">
+          <form class="form-card" id="entryForm">
+            <div class="section-kicker">STEP 1 · 나의 방학 계획</div>
+            <h2>방학 버킷리스트 🏖️</h2>
+            <p class="description">짧게 적어도 괜찮아요. 이름은 저장되지만 게시판에는 표시되지 않아요.</p>
+
+            <div class="field">
+              <label for="studentName">이름</label>
+              <input id="studentName" maxlength="12" placeholder="예: 김여름" required />
+            </div>
+
+            <div class="prompt-list">
+              <div class="prompt-line">
+                <span class="prompt-no">1</span>
+                <input id="bucket1" maxlength="50" placeholder="방학 동안 꼭 하고 싶은 것" required />
+              </div>
+              <div class="prompt-line">
+                <span class="prompt-no">2</span>
+                <input id="bucket2" maxlength="50" placeholder="고치고 싶은 생활 습관" />
+              </div>
+              <div class="prompt-line">
+                <span class="prompt-no">3</span>
+                <input id="bucket3" maxlength="50" placeholder="개학한 나에게 해 주고 싶은 말" />
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="section-kicker">STEP 2 · 친구에게 전하기</div>
+            <h2>친구에게 한마디 💌</h2>
+            <p class="description">고마웠거나 칭찬하고 싶은 친구에게 따뜻한 말을 남겨 주세요. 작성자 이름은 공개되지 않아요.</p>
+
+            <div class="field">
+              <label for="friendName">누구에게?</label>
+              <input id="friendName" maxlength="15" placeholder="예: 우리 반 모두에게 / 민수에게" />
+            </div>
+            <div class="field">
+              <label for="friendMessage">전하고 싶은 말</label>
+              <textarea id="friendMessage" maxlength="120" placeholder="예: 1학기 동안 같이 웃어줘서 고마워! 방학 잘 보내 😊"></textarea>
+            </div>
+
+            <label class="check-row">
+              <input type="checkbox" id="promiseCheck" required />
+              <span>친구를 놀리거나 상처 주는 말 없이, 함께 보아도 괜찮은 내용만 작성하겠습니다.</span>
+            </label>
+
+            <button class="primary-btn" type="submit" id="submitBtn">우리 반 게시판에 붙이기 ✨</button>
+
+            <div class="submitted-notice" id="submittedNotice" role="status" aria-live="polite">
+              <div class="submitted-icon">🌴</div>
+              <h3>이 기기에서는 이미 등록했어요!</h3>
+              <p>한 기기에서는 한 번만 작성할 수 있어요.<br>친구들의 이야기는 ‘다 같이 보기’에서 확인해 주세요.</p>
+              <button class="secondary-btn" type="button" id="goWallBtn">다 같이 보기</button>
+            </div>
+          </form>
+
+          <aside class="preview-card" aria-live="polite">
+            <div class="preview-title">
+              <div class="section-kicker">미리보기</div>
+              <h3>이렇게 보여요!</h3>
+            </div>
+            <div class="preview-stack">
+              <article class="mini-note bucket">
+                <strong id="previewAuthor">나의 방학 버킷리스트</strong>
+                <p id="previewBucket">1. 방학 동안 꼭 하고 싶은 것\n2. 고치고 싶은 생활 습관\n3. 개학한 나에게 해 주고 싶은 말</p>
+              </article>
+              <article class="mini-note friend">
+                <strong id="previewFriend">친구에게 💌</strong>
+                <p id="previewMessage">따뜻한 한마디가 여기에 보여요.</p>
+              </article>
+            </div>
+            <div class="status-box">
+              <span class="status-dot" id="statusDot"></span>
+              <span id="connectionText">공유 게시판 연결 상태를 확인하는 중이에요.</span>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="panel" id="wallPanel" role="tabpanel">
+        <div class="wall-head">
+          <div>
+            <div class="section-kicker">OUR SUMMER WALL</div>
+            <h2>우리 반의 여름 이야기</h2>
+          </div>
+          <div class="wall-count" id="wallCount">0개의 이야기</div>
+        </div>
+
+        <div class="filter-row" aria-label="게시물 필터">
+          <button class="filter-btn active" data-filter="all" type="button">전체</button>
+          <button class="filter-btn" data-filter="bucket" type="button">🏖️ 버킷리스트</button>
+          <button class="filter-btn" data-filter="friend" type="button">💌 친구에게</button>
+        </div>
+
+        <div class="wall-grid" id="wallGrid"></div>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="teacherDialog">
+    <form class="dialog-inner" method="dialog" id="teacherForm">
+      <h3>선생님 모드 🔐</h3>
+      <p>비밀번호를 입력하면 게시물을 삭제할 수 있어요. 기본 비밀번호는 코드 상단에서 바꿀 수 있습니다.</p>
+      <div class="field">
+        <label for="teacherPassword">비밀번호</label>
+        <input id="teacherPassword" type="password" inputmode="numeric" autocomplete="off" placeholder="비밀번호 입력" />
+      </div>
+      <div class="dialog-actions">
+        <button class="secondary-btn" value="cancel" type="button" id="closeTeacherDialog">취소</button>
+        <button class="primary-btn" value="default" type="submit" style="width:auto; min-width:120px;">확인</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module">
+    /* ============================================================
+       1) 소파와고양이 Firebase 프로젝트에 연결되어 있습니다.
+       2) Firebase 연결 실패 시 이 기기의 localStorage 모드로 전환됩니다.
+       3) 선생님 모드 비밀번호는 아래에서 변경할 수 있습니다.
+       ============================================================ */
+
     const firebaseConfig = {
-        apiKey: "AIzaSyALH2cc2T41m3C8_Bqt98yFP0NJqeTTmKU",
-        authDomain: "coupong-50898.firebaseapp.com",
-        databaseURL: "https://coupong-50898-default-rtdb.firebaseio.com",
-        projectId: "coupong-50898",
-        storageBucket: "coupong-50898.firebasestorage.app",
-        messagingSenderId: "396007126503",
-        appId: "1:396007126503:web:e8caa6aaafb48f54a5b942",
-        measurementId: "G-R2604RJDDV"
+      apiKey: "AIzaSyBiSZE7MZdGNZk1uxe7pr08eq-Qmj3wq0w",
+      authDomain: "sofancat-d8629.firebaseapp.com",
+      databaseURL: "https://sofancat-d8629-default-rtdb.firebaseio.com",
+      projectId: "sofancat-d8629",
+      storageBucket: "sofancat-d8629.firebasestorage.app",
+      messagingSenderId: "1076519359093",
+      appId: "1:1076519359093:web:f4ede234c2a2c3476ede3c",
+      measurementId: "G-SJZNJY3WES"
     };
 
-    const app = firebase.initializeApp(firebaseConfig);
-    const database = firebase.database(app);
+    const ROOM_ID = "summer-class-2026"; // 반마다 다르게 바꾸면 게시판이 분리됩니다.
+    const TEACHER_PASSWORD = "1234";     // 꼭 원하는 비밀번호로 바꾸세요.
+    const MAX_POSTS = 200;
+    const SUBMISSION_KEY = `summerWallSubmitted:${ROOM_ID}`;
 
-    function generateRandomCode() {
-      return Math.random().toString(36).substring(2, 8).toUpperCase();
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+    const state = {
+      posts: [],
+      filter: "all",
+      teacherMode: false,
+      submitting: false,
+      submitted: false,
+      mode: "local",
+      db: null,
+      dbApi: null
+    };
+
+    const els = {
+      form: $("#entryForm"),
+      studentName: $("#studentName"),
+      bucket1: $("#bucket1"),
+      bucket2: $("#bucket2"),
+      bucket3: $("#bucket3"),
+      friendName: $("#friendName"),
+      friendMessage: $("#friendMessage"),
+      promiseCheck: $("#promiseCheck"),
+      previewAuthor: $("#previewAuthor"),
+      previewBucket: $("#previewBucket"),
+      previewFriend: $("#previewFriend"),
+      previewMessage: $("#previewMessage"),
+      wallGrid: $("#wallGrid"),
+      wallCount: $("#wallCount"),
+      toast: $("#toast"),
+      statusDot: $("#statusDot"),
+      connectionText: $("#connectionText"),
+      teacherDialog: $("#teacherDialog"),
+      teacherPassword: $("#teacherPassword"),
+      submitBtn: $("#submitBtn"),
+      submittedNotice: $("#submittedNotice"),
+      goWallBtn: $("#goWallBtn")
+    };
+
+    function escapeHtml(value = "") {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
-    function renderRoomList(rooms) {
-      const roomList = document.getElementById('roomList');
-      roomList.innerHTML = '';
+    function cleanText(value, maxLength) {
+      return String(value || "").trim().replace(/\s{3,}/g, "  ").slice(0, maxLength);
+    }
 
-      for (const [roomId, roomData] of Object.entries(rooms || {})) {
-        const li = document.createElement('li');
-        li.textContent = `(${roomId}) ${roomData.host}의 방 (${roomData.visibility === 'private' ? '비공개' : '공개'})`;
-        li.onclick = () => {
-          if (roomData.visibility === 'private') {
-            showPasswordPopup(roomId, roomData.password);
-          } else {
-            joinRoom(roomId);
-          }
-        };
-        roomList.appendChild(li);
+    function makeId() {
+      return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    }
+
+    function formatTime(timestamp) {
+      try {
+        return new Intl.DateTimeFormat("ko-KR", {
+          month: "numeric",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        }).format(new Date(timestamp));
+      } catch {
+        return "방금 전";
       }
     }
 
-    function fetchRoomList() {
-      const roomRef = firebase.database().ref('rooms');
-      roomRef.on('value', (snapshot) => {
-        const rooms = snapshot.val();
-        renderRoomList(rooms);
+    let toastTimer;
+    function showToast(message) {
+      els.toast.textContent = message;
+      els.toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => els.toast.classList.remove("show"), 2200);
+    }
+
+    function readSubmissionMarker() {
+      try {
+        return JSON.parse(localStorage.getItem(SUBMISSION_KEY) || "null");
+      } catch {
+        return null;
+      }
+    }
+
+    function hasSubmittedOnDevice() {
+      const marker = readSubmissionMarker();
+      if (marker?.status === "submitted") return true;
+      if (marker?.status === "pending") {
+        const pendingAge = Date.now() - Number(marker.updatedAt || 0);
+        if (pendingAge < 2 * 60 * 1000) return true;
+        clearSubmissionMarker();
+      }
+      return false;
+    }
+
+    function setSubmissionMarker(status) {
+      localStorage.setItem(SUBMISSION_KEY, JSON.stringify({
+        status,
+        roomId: ROOM_ID,
+        updatedAt: Date.now()
+      }));
+    }
+
+    function clearSubmissionMarker() {
+      localStorage.removeItem(SUBMISSION_KEY);
+    }
+
+    function applySubmissionLock() {
+      state.submitted = hasSubmittedOnDevice();
+      els.form.classList.toggle("submitted", state.submitted);
+      [...els.form.elements].forEach((control) => {
+        if (control !== els.goWallBtn) control.disabled = state.submitted;
+      });
+      if (state.submitted) {
+        els.submittedNotice.hidden = false;
+      }
+    }
+
+    function setConnection(mode) {
+      state.mode = mode;
+      const isFirebase = mode === "firebase";
+      els.statusDot.classList.toggle("local", !isFirebase);
+      els.connectionText.textContent = isFirebase
+        ? "온라인 공유 게시판에 연결되어 있어요. 다른 기기에도 바로 보여요."
+        : "현재는 이 기기에서만 보이는 연습 모드예요. Firebase 설정을 넣으면 함께 사용할 수 있어요.";
+    }
+
+    function switchTab(tabName) {
+      $$(".tab-btn").forEach((btn) => {
+        const active = btn.dataset.tab === tabName;
+        btn.classList.toggle("active", active);
+        btn.setAttribute("aria-selected", String(active));
+      });
+      $("#writePanel").classList.toggle("active", tabName === "write");
+      $("#wallPanel").classList.toggle("active", tabName === "wall");
+      if (tabName === "wall") renderWall();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function updatePreview() {
+      const buckets = [els.bucket1.value, els.bucket2.value, els.bucket3.value]
+        .map((item) => cleanText(item, 50))
+        .filter(Boolean);
+      const receiver = cleanText(els.friendName.value, 15);
+      const message = cleanText(els.friendMessage.value, 120);
+
+      els.previewAuthor.textContent = "나의 방학 버킷리스트";
+      els.previewBucket.textContent = buckets.length
+        ? buckets.map((text, index) => `${index + 1}. ${text}`).join("\n")
+        : "1. 방학 동안 꼭 하고 싶은 것\n2. 고치고 싶은 생활 습관\n3. 개학한 나에게 해 주고 싶은 말";
+      els.previewFriend.textContent = receiver ? `${receiver}에게 💌` : "친구에게 💌";
+      els.previewMessage.textContent = message || "따뜻한 한마디가 여기에 보여요.";
+    }
+
+    function normalizePost(raw, id) {
+      return {
+        id: id || raw.id || makeId(),
+        author: cleanText(raw.author, 12) || "익명",
+        buckets: Array.isArray(raw.buckets) ? raw.buckets.map((v) => cleanText(v, 50)).filter(Boolean).slice(0, 3) : [],
+        friendName: cleanText(raw.friendName, 15),
+        friendMessage: cleanText(raw.friendMessage, 120),
+        createdAt: Number(raw.createdAt) || Date.now()
+      };
+    }
+
+    function filteredPosts() {
+      return state.posts.filter((post) => {
+        if (state.filter === "bucket") return post.buckets.length > 0;
+        if (state.filter === "friend") return Boolean(post.friendMessage);
+        return true;
       });
     }
 
-    function showPopup() {
-      document.getElementById('roomPopup').style.display = 'block';
-      document.querySelector('.overlay').style.display = 'block';
+    function renderWall() {
+      const posts = filteredPosts();
+      els.wallCount.textContent = `${state.posts.length}개의 이야기`;
+
+      if (!posts.length) {
+        els.wallGrid.innerHTML = `
+          <div class="empty">
+            <div><span>🌻</span>아직 붙어 있는 이야기가 없어요.<br>첫 번째 여름 이야기를 남겨 주세요!</div>
+          </div>`;
+        return;
+      }
+
+      els.wallGrid.innerHTML = posts.map((post, index) => {
+        const showBucket = state.filter === "all" || state.filter === "bucket";
+        const showFriend = state.filter === "all" || state.filter === "friend";
+
+        const bucketHtml = showBucket && post.buckets.length
+          ? `<div class="block">
+              <div class="block-title">🏖️ 방학 버킷리스트</div>
+              <p class="content">${post.buckets.map((text, i) => `${i + 1}. ${escapeHtml(text)}`).join("<br>")}</p>
+            </div>`
+          : "";
+        const friendHtml = showFriend && post.friendMessage
+          ? `<div class="block">
+              <div class="block-title">💌 ${escapeHtml(post.friendName || "친구")}에게</div>
+              <p class="content">${escapeHtml(post.friendMessage)}</p>
+            </div>`
+          : "";
+        return `<article class="wall-card" style="animation-delay:${Math.min(index, 12) * 25}ms">
+          <button class="delete-card" type="button" data-delete-id="${escapeHtml(post.id)}" aria-label="게시물 삭제">×</button>
+          ${bucketHtml}
+          ${friendHtml}
+          <div class="meta">${escapeHtml(formatTime(post.createdAt))}</div>
+        </article>`;
+      }).join("");
     }
 
-    function hidePopup() {
-      document.getElementById('roomPopup').style.display = 'none';
-      document.querySelector('.overlay').style.display = 'none';
+    function loadLocalPosts() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(`summerWall:${ROOM_ID}`) || "[]");
+        state.posts = Array.isArray(stored)
+          ? stored.map((post) => normalizePost(post)).sort((a, b) => b.createdAt - a.createdAt).slice(0, MAX_POSTS)
+          : [];
+      } catch {
+        state.posts = [];
+      }
+      renderWall();
     }
 
-    function showPasswordPopup(roomId, correctPassword) {
-      const passwordPopup = document.getElementById('passwordPopup');
-      passwordPopup.style.display = 'block';
-      document.querySelector('.overlay').style.display = 'block';
+    function saveLocalPosts() {
+      localStorage.setItem(`summerWall:${ROOM_ID}`, JSON.stringify(state.posts.slice(0, MAX_POSTS)));
+    }
 
-      const joinButton = passwordPopup.querySelector('.join');
-      joinButton.onclick = () => {
-        const inputPassword = document.getElementById('inputPassword').value;
-        if (inputPassword === correctPassword) {
-          hidePasswordPopup();
-          joinRoom(roomId);
+    async function addPost(post) {
+      if (state.mode === "firebase" && state.db && state.dbApi) {
+        const { ref, push, set } = state.dbApi;
+        const newRef = push(ref(state.db, `summerWalls/${ROOM_ID}/posts`));
+        await set(newRef, post);
+        return;
+      }
+      state.posts.unshift(normalizePost(post));
+      state.posts = state.posts.slice(0, MAX_POSTS);
+      saveLocalPosts();
+      renderWall();
+    }
+
+    async function deletePost(id) {
+      if (!state.teacherMode) return;
+      if (!confirm("이 게시물을 삭제할까요?")) return;
+
+      try {
+        if (state.mode === "firebase" && state.db && state.dbApi) {
+          const { ref, remove } = state.dbApi;
+          await remove(ref(state.db, `summerWalls/${ROOM_ID}/posts/${id}`));
         } else {
-          alert('비밀번호가 틀렸습니다.');
+          state.posts = state.posts.filter((post) => post.id !== id);
+          saveLocalPosts();
+          renderWall();
         }
+        showToast("게시물을 삭제했어요.");
+      } catch (error) {
+        console.error(error);
+        showToast("삭제하지 못했어요. Firebase 권한을 확인해 주세요.");
+      }
+    }
+
+    async function initFirebase() {
+      const configured = !Object.values(firebaseConfig).some((value) => String(value).includes("YOUR_"));
+      if (!configured) {
+        setConnection("local");
+        loadLocalPosts();
+        return;
+      }
+
+      try {
+        const [{ initializeApp }, dbModule] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js")
+        ]);
+        const app = initializeApp(firebaseConfig);
+        const db = dbModule.getDatabase(app);
+        state.db = db;
+        state.dbApi = dbModule;
+        setConnection("firebase");
+
+        const postsRef = dbModule.ref(db, `summerWalls/${ROOM_ID}/posts`);
+        dbModule.onValue(postsRef, (snapshot) => {
+          const value = snapshot.val() || {};
+          state.posts = Object.entries(value)
+            .map(([id, post]) => normalizePost(post, id))
+            .sort((a, b) => b.createdAt - a.createdAt)
+            .slice(0, MAX_POSTS);
+          renderWall();
+        }, (error) => {
+          console.error(error);
+          setConnection("local");
+          loadLocalPosts();
+          showToast("온라인 연결에 실패해 이 기기 모드로 전환했어요.");
+        });
+      } catch (error) {
+        console.error(error);
+        setConnection("local");
+        loadLocalPosts();
+        showToast("Firebase 연결에 실패해 이 기기 모드로 전환했어요.");
+      }
+    }
+
+    els.form.addEventListener("input", updatePreview);
+
+    els.form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (state.submitting || hasSubmittedOnDevice()) {
+        applySubmissionLock();
+        showToast("이 기기에서는 이미 한 번 등록했어요.");
+        return;
+      }
+
+      const author = cleanText(els.studentName.value, 12);
+      const buckets = [els.bucket1.value, els.bucket2.value, els.bucket3.value]
+        .map((item) => cleanText(item, 50))
+        .filter(Boolean);
+      const friendMessage = cleanText(els.friendMessage.value, 120);
+
+      if (!author || !buckets.length) {
+        showToast("이름과 첫 번째 버킷리스트를 적어 주세요.");
+        return;
+      }
+      if (!els.promiseCheck.checked) {
+        showToast("따뜻한 말 약속을 확인해 주세요.");
+        return;
+      }
+
+      const post = {
+        author,
+        buckets,
+        friendName: cleanText(els.friendName.value, 15),
+        friendMessage,
+        createdAt: Date.now()
       };
 
-      const cancelButton = passwordPopup.querySelector('.cancel');
-      cancelButton.onclick = hidePasswordPopup;
-    }
+      try {
+        state.submitting = true;
+        els.submitBtn.disabled = true;
+        els.submitBtn.textContent = "게시판에 붙이는 중...";
+        setSubmissionMarker("pending");
 
-    function hidePasswordPopup() {
-      document.getElementById('passwordPopup').style.display = 'none';
-      document.querySelector('.overlay').style.display = 'none';
-    }
-
-    function handleVisibilityChange() {
-      const visibility = document.getElementById('visibility').value;
-      const passwordField = document.getElementById('roomPassword');
-      passwordField.style.display = visibility === 'private' ? 'block' : 'none';
-    }
-
-    function createRoom() {
-      const userName = document.getElementById('userName').value;
-      const visibility = document.getElementById('visibility').value;
-      const roomPassword = document.getElementById('roomPassword').value;
-
-      if (!userName) {
-        alert('사용자 이름은 필수입니다.');
-        return;
+        await addPost(post);
+        setSubmissionMarker("submitted");
+        state.submitted = true;
+        els.form.reset();
+        updatePreview();
+        applySubmissionLock();
+        showToast("게시판에 예쁘게 붙였어요! ✨");
+        switchTab("wall");
+      } catch (error) {
+        console.error(error);
+        clearSubmissionMarker();
+        state.submitted = false;
+        showToast("저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
+      } finally {
+        state.submitting = false;
+        if (!state.submitted) {
+          els.submitBtn.disabled = false;
+          els.submitBtn.textContent = "우리 반 게시판에 붙이기 ✨";
+        }
       }
+    });
 
-      if (visibility === 'private' && !roomPassword) {
-        alert('비공개 방의 경우 비밀번호를 입력해야 합니다.');
-        return;
-      }
+    $$(".tab-btn").forEach((btn) => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
 
-      const roomId = generateRandomCode();
-      const roomRef = firebase.database().ref(`rooms/${roomId}`);
-      roomRef.set({
-        host: userName,
-        visibility: visibility,
-        password: visibility === 'private' ? roomPassword : null,
-        users: {
-          0: { name: userName, role: '방장' }
-        },
-        isStarted: false
-      }).then(() => {
-        alert(`게임방이 생성되었습니다. 방장: ${userName}`);
-        hidePopup();
-        localStorage.setItem('currentRoom', roomId);
-        localStorage.setItem('userName', userName);
-        localStorage.setItem('role', '방장');
-        window.location.href = 'wait.html'; // 대기실 페이지로 이동
+    $$(".filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.filter = btn.dataset.filter;
+        $$(".filter-btn").forEach((item) => item.classList.toggle("active", item === btn));
+        renderWall();
       });
-    }
+    });
 
-    function joinRoom(roomId) {
-      const userName = prompt('사용자 이름을 입력하세요:');
-      if (!userName) {
-        alert('사용자 이름을 입력해야 합니다.');
+    els.wallGrid.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-delete-id]");
+      if (button) deletePost(button.dataset.deleteId);
+    });
+
+    $("#teacherBtn").addEventListener("click", () => {
+      if (state.teacherMode) {
+        state.teacherMode = false;
+        document.body.classList.remove("teacher-mode");
+        $("#teacherBtn").textContent = "🔐";
+        showToast("선생님 모드를 종료했어요.");
         return;
       }
+      els.teacherPassword.value = "";
+      els.teacherDialog.showModal();
+      setTimeout(() => els.teacherPassword.focus(), 50);
+    });
 
-      const roomRef = firebase.database().ref(`rooms/${roomId}/users`);
-      roomRef.child(1).set({
-        name: userName,
-        role: '참가자'
-      }).then(() => {
-        localStorage.setItem('currentRoom', roomId);
-        localStorage.setItem('userName', userName);
-        localStorage.setItem('role', '참가자');
-        window.location.href = 'wait.html'; // 대기실 페이지로 이동
-      });
-    }
+    $("#closeTeacherDialog").addEventListener("click", () => els.teacherDialog.close());
 
+    $("#teacherForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (els.teacherPassword.value === TEACHER_PASSWORD) {
+        state.teacherMode = true;
+        document.body.classList.add("teacher-mode");
+        $("#teacherBtn").textContent = "🔓";
+        els.teacherDialog.close();
+        showToast("선생님 모드가 켜졌어요. 카드의 × 버튼으로 삭제할 수 있어요.");
+      } else {
+        showToast("비밀번호가 맞지 않아요.");
+        els.teacherPassword.select();
+      }
+    });
 
-    document.querySelector('.create-room').addEventListener('click', showPopup);
-    document.querySelector('.popup .cancel').addEventListener('click', hidePopup);
-    document.querySelector('.popup .create').addEventListener('click', createRoom);
-    document.getElementById('visibility').addEventListener('change', handleVisibilityChange);
+    els.goWallBtn.addEventListener("click", () => switchTab("wall"));
 
-    fetchRoomList();
+    window.addEventListener("storage", (event) => {
+      if (event.key === SUBMISSION_KEY) applySubmissionLock();
+    });
+
+    $("#presentBtn").addEventListener("click", async () => {
+      document.body.classList.toggle("presentation");
+      switchTab("wall");
+      if (document.body.classList.contains("presentation")) {
+        try { await document.documentElement.requestFullscreen?.(); } catch {}
+        $("#presentBtn").textContent = "↙";
+      } else {
+        try { if (document.fullscreenElement) await document.exitFullscreen(); } catch {}
+        $("#presentBtn").textContent = "⛶";
+      }
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement && document.body.classList.contains("presentation")) {
+        document.body.classList.remove("presentation");
+        $("#presentBtn").textContent = "⛶";
+      }
+    });
+
+    updatePreview();
+    applySubmissionLock();
+    initFirebase();
   </script>
 </body>
 </html>
