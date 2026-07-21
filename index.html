@@ -467,6 +467,16 @@
       background: rgba(255,255,255,.56);
       border: 1px solid rgba(255,255,255,.72);
     }
+    .teacher-author {
+      margin: 2px 44px 14px 0;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.58);
+      color: rgba(47,52,64,.76);
+      font-size: 12px;
+      font-weight: 950;
+      word-break: break-all;
+    }
     .wall-card .block { margin-top: 13px; }
     .wall-card .block-title { margin-bottom: 5px; color: rgba(47,52,64,.64); font-size: 12px; font-weight: 950; }
     .wall-card .content { margin: 0; white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; line-height: 1.58; font-weight: 690; }
@@ -709,7 +719,7 @@
   <dialog id="teacherDialog">
     <form class="dialog-inner" method="dialog" id="teacherForm">
       <h3>선생님 모드 🔐</h3>
-      <p>비밀번호를 입력하면 게시물을 삭제할 수 있어요. 기본 비밀번호는 코드 상단에서 바꿀 수 있습니다.</p>
+      <p>비밀번호를 입력하면 게시물을 삭제할 수 있어요.</p>
       <div class="field">
         <label for="teacherPassword">비밀번호</label>
         <input id="teacherPassword" type="password" inputmode="numeric" autocomplete="off" placeholder="비밀번호 입력" />
@@ -740,7 +750,7 @@
     };
 
     const ROOM_ID = "summer-class-2026"; // 반마다 다르게 바꾸면 게시판이 분리됩니다.
-    const TEACHER_PASSWORD = "1234";     // 꼭 원하는 비밀번호로 바꾸세요.
+    const TEACHER_PASSWORD = "kari0922";     // 꼭 원하는 비밀번호로 바꾸세요.
     const MAX_POSTS = 200;
     const SUBMISSION_KEY = `summerWallSubmitted:${ROOM_ID}`;
 
@@ -946,8 +956,13 @@
               <p class="content">${escapeHtml(post.friendMessage)}</p>
             </div>`
           : "";
+        const authorHtml = state.teacherMode
+          ? `<div class="teacher-author">작성자: ${escapeHtml(post.author || "익명")}</div>`
+          : "";
+
         return `<article class="wall-card" style="animation-delay:${Math.min(index, 12) * 25}ms">
           <button class="delete-card" type="button" data-delete-id="${escapeHtml(post.id)}" aria-label="게시물 삭제">×</button>
+          ${authorHtml}
           ${bucketHtml}
           ${friendHtml}
           <div class="meta">${escapeHtml(formatTime(post.createdAt))}</div>
@@ -1127,6 +1142,7 @@
         state.teacherMode = false;
         document.body.classList.remove("teacher-mode");
         $("#teacherBtn").textContent = "🔐";
+        renderWall();
         showToast("선생님 모드를 종료했어요.");
         return;
       }
@@ -1144,7 +1160,8 @@
         document.body.classList.add("teacher-mode");
         $("#teacherBtn").textContent = "🔓";
         els.teacherDialog.close();
-        showToast("선생님 모드가 켜졌어요. 카드의 × 버튼으로 삭제할 수 있어요.");
+        renderWall();
+        showToast("선생님 모드가 켜졌어요. 작성자 이름을 확인하고 게시물을 삭제할 수 있어요.");
       } else {
         showToast("비밀번호가 맞지 않아요.");
         els.teacherPassword.select();
